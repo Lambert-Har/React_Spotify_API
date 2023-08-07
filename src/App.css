@@ -3,8 +3,8 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #121212;
-  color: #fff;
+  background-color: #e2e2e2;
+  color: #000000;
 }
 
 .App {
@@ -73,21 +73,23 @@ input[type="text"] {
 }
 
 .artist-container {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, calc(33.33% - 20px));
+  gap: 20px;
   justify-content: space-between;
+  margin-top: 60px;
 }
 
 .artist {
-  width: calc(33.33% - 20px);
   margin: 0 0 20px;
-  background-color: #191414;
+  background-color: #ffffff;
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: black;
 }
 
 .artist img {
@@ -124,13 +126,15 @@ h2 {
 .track {
   width: calc(33.33% - 20px);
   margin: 0 0 20px;
-  background-color: #191414;
+  margin-top: 20px;
+  background-color: #ffffff;
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: black;
 }
 
 .track img {
@@ -161,4 +165,35 @@ h2 {
   justify-content: center;
   color: #b3b3b3;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+.spotify-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.spotify-icon__logo {
+  font-size: 34px;
+  margin-right: 10px;
+}
+
+.spotify-icon__text {
+  font-size: 1.5rem;
+}
+
+.loginh2 {
+  margin-top: 30px;
+  font-size: 30px;
+}
+.top-tracks {
+  margin-top: 40px;
+}
+
+.track-container {
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.search {
+  margin-right: 40px;
 }

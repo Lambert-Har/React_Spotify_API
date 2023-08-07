@@ -7,6 +7,7 @@ import './App.css';
 function App() {
   const CLIENT_ID = "0d63b35e77424ff6ae152308ed555b45";
   const REDIRECT_URI = "http://localhost:3000";
+  // const REDIRECT_URI = "https://spotifyground.netlify.app/";
   const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
   const RESPONSE_TYPE = "token";
   const SCOPES = "playlist-modify-public playlist-modify-private user-library-modify";
@@ -17,6 +18,31 @@ function App() {
   const [playlistMessage, setPlaylistMessage] = useState("");
   const [favoritesMessage, setFavoritesMessage] = useState("");
 
+  const [playlistName, setPlaylistName] = useState("");
+  const [playlistSuccessMessage, setPlaylistSuccessMessage] = useState("");
+
+  const createPlaylist = async () => {
+    try {
+
+      const userId = '	314f6zc5nth26izucjrouvbdrww4'; // Replace with the user's Spotify ID.
+
+      const response = await axios.post(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+        name: playlistName,
+        public: true, // Set to true if you want the playlist to be public.
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Playlist created:', response.data);
+      setPlaylistSuccessMessage("Playlist created successfully!");
+    } catch (error) {
+      console.error('Error creating playlist:', error);
+      setPlaylistSuccessMessage("Error creating playlist.");
+    }
+  };
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -71,9 +97,14 @@ function App() {
 
   const renderArtists = () => {
     if (artists.length === 0) {
-      return <p>No artist found on Spotify. Please try another search term.</p>;
+      return (
+        <div className="centered">
+          <p>No artist found on Spotify.</p>
+          <p> Please try another search term.</p>
+        </div>
+      );
     }
-  
+
     return artists.slice(0, 6).map((artist) => (
       <div key={artist.id} className="artist">
         {artist.images.length ? (
@@ -91,7 +122,7 @@ function App() {
       </div>
     ));
   };
-  
+
 
   // TRACKS
 
@@ -118,13 +149,13 @@ function App() {
     try {
       // Replace 'YOUR_ACCESS_TOKEN' with the actual access token obtained from Spotify authentication.
       const accessToken = token;
-  
+
       // Replace 'YOUR_SPOTIFY_USER_ID' with the user's Spotify ID.
       const userId = '314f6zc5nth26izucjrouvbdrww4';
-  
+
       // Replace 'YOUR_PLAYLIST_ID' with the ID of the playlist where you want to add the track.
       const playlistId = '6pkD96B6qzLBRGbKAhF9mb';
-  
+
       // Make a POST request to add the track to the playlist.
       const response = await axios.post(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
         uris: [trackUri],
@@ -134,7 +165,7 @@ function App() {
           'Content-Type': 'application/json',
         },
       });
-  
+
       console.log('Track added to playlist:', response.data);
       setPlaylistMessage("Track added to playlist successfully!");
     } catch (error) {
@@ -147,7 +178,7 @@ function App() {
     try {
       // Replace 'YOUR_ACCESS_TOKEN' with the actual access token obtained from Spotify authentication.
       const accessToken = token;
-  
+
       // Make a PUT request to add the track to the user's saved tracks (favorites).
       const response = await axios.put(`https://api.spotify.com/v1/me/tracks`, {
         ids: [trackId],
@@ -157,7 +188,7 @@ function App() {
           'Content-Type': 'application/json',
         },
       });
-  
+
       console.log('Track added to favorites:', response.data);
       setFavoritesMessage("Track added to favorites successfully!");
     } catch (error) {
@@ -165,7 +196,7 @@ function App() {
       setFavoritesMessage("Error adding track to favorites.");
     }
   };
-  
+
 
   const renderTopTracks = () => {
     return topTracks.map((track) => (
@@ -195,27 +226,65 @@ function App() {
         <h1>Spotify React</h1>
         {!token ?
           <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${encodeURIComponent(SCOPES)}`}>
-            <FaSpotify />Login to Spotify
+            <div className="spotify-icon">
+              <FaSpotify className="spotify-icon__logo" />
+              <span className="spotify-icon__text">Login to Spotify</span>
+            </div>
           </a>
           : <button onClick={logout}>Logout</button>}
 
+        {token ? (
+          <React.Fragment>
+            {/* Existing artist and top tracks sections... */}
+
+            {/* Create New Playlist */}
+            <div className="playlist-container">
+              <h3>Create New Playlist ---| OR |--- Search an Artist</h3>
+              <form onSubmit={(e) => { e.preventDefault(); createPlaylist(); }}>
+                <input
+                  type="text"
+                  placeholder="Playlist Name"
+                  value={playlistName}
+                  onChange={(e) => setPlaylistName(e.target.value)}
+                />
+                <button type="submit">Create Playlist</button>
+              </form>
+              <p>{playlistSuccessMessage && <p>{playlistSuccessMessage}</p>}</p>
+            </div>
+
+            {/* Existing playlistMessage and favoritesMessage sections... */}
+          </React.Fragment>
+        ) : null}
+
         {token ?
-          <form onSubmit={searchArtists}>
-            <input type="text" onChange={e => setSearchKey(e.target.value)} />
+          <form className="search" onSubmit={searchArtists}>
+            <input type="text" placeholder="Search Artist ..." onChange={e => setSearchKey(e.target.value)} />
             <button type="submit">Search</button>
           </form>
-          : <h2>Please login</h2>
+          : <h2 className="loginh2">Please login</h2>
         }
 
-        {renderArtists()}
-        {/* Display top tracks */}
-        <div className="top-tracks">
-          <h2>Top Tracks</h2>
-          {renderTopTracks()}
-        </div>
 
-        {playlistMessage && <p>{playlistMessage}</p>}
-        {favoritesMessage && <p>{favoritesMessage}</p>}
+        {token ? (
+          <React.Fragment>
+            <div className="artist-container">
+              {renderArtists()}
+            </div>
+
+            <div>
+              {/* Display top tracks */}
+              <div className="top-tracks">
+                <h2>Top Tracks</h2>
+                <div className="track-container">{renderTopTracks()}</div> {/* Wrap with the track-container */}
+                <p>{playlistMessage && <p>{playlistMessage}</p>}</p>
+                <p>{favoritesMessage && <p>{favoritesMessage}</p>}</p>
+              </div>
+            </div>
+
+          </React.Fragment>
+        ) : null}
+
+
       </header>
     </div>
   );
