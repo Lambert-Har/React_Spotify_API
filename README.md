@@ -14,3 +14,9 @@ First clone the repo via https://github.com/Lambert-Har/React_Spotify_API.git
 7. Open http://localhost:3000 in web browser.
 8. Enjoy!
 
+## Screenshots
+![Sc1](https://github.com/Lambert-Har/React_Spotify_API/assets/106100223/99d295d8-5f18-444a-910b-53ba5bdbc7b6)
+
+![Sc2](https://github.com/Lambert-Har/React_Spotify_API/assets/106100223/2640a022-1463-4ca4-8c74-72fea4f5f5c5)
+
+
